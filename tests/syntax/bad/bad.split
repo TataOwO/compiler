@@ -1,0 +1,229 @@
+$$$newline_in_string
+class A {
+    String s = "
+
+";
+}
+$$$quotation_in_string
+class A {
+    String s = " " ";
+}
+$$$slash_in_string
+class A {
+    String s= "\ ";
+}
+$$$unclosed_comment
+
+class A { }
+
+/*
+class B extends A {
+    void g() { g(this,this); }
+    void g(A a, B b) { }
+    void g(B b, A a) { }
+}
+$$$unclosed_escaped_string
+class A {
+    String s = "\";
+}
+$$$unclosed_string
+class A {
+    String s = ";
+    }
+
+$$$bad_ident1
+class 1A { }
+$$$bad_ident2
+class  A'A { }
+$$$block1
+class A { void m() { { } }
+$$$block2
+class A { int m() { { 0 } } }
+$$$cheater1
+public class A { }
+$$$cheater2
+protected class A { }
+$$$cheater3
+final class A { }
+$$$cheater4
+package java.lang.*;
+class A { }
+$$$cheater5
+import java.util.*;
+class A { }
+$$$cheater6
+class A { void m() { int x = 0; x += 1; } }
+$$$class_decl1
+class { }
+$$$class_decl2
+class int { }
+$$$constructor1
+class A { A() { }
+$$$constructor2
+class A { A {} }
+$$$constructor3
+class A {
+    A ()
+}
+$$$expr10
+class A { void m() { int x = new (,); } }
+$$$expr12
+class A { void m() { int x = 0 = 0; } }
+$$$expr13
+class A { void m() { int x = 0 ! 0; } }
+$$$expr14
+class A { void m() { int x = 0 <> 0; } }
+$$$expr15
+class A { void m() { int x = 0 <== 0; } }
+$$$expr16
+class A { void m() { int x = (A.x)0; } }
+$$$expr17
+class A { void m() { int x = (0)0; } }
+$$$expr19
+class A {
+    void m() { int i = new A; }
+}
+$$$expr1
+class A { void m() { int x = (; } }
+$$$expr20
+class A {
+    void m() { int i = j.1 = 2 ; }
+}
+$$$expr21
+class A {
+    void m() { A i = (void) ; }
+}
+$$$expr22
+class A {
+    void m() { A i = j+ ; }
+}
+$$$expr23
+class A {
+    void m() { A i = j ++ i ; }
+}
+$$$expr24
+class A {
+    void m() { A i == i ; }
+}
+$$$expr2
+class A { A a; void m() { int x = a.; } }
+$$$expr3
+class A { A a; void m() { int x = a.x = ; } }
+$$$expr4
+class A { A a; void m() { int x = a.x = {}; } }
+$$$expr8
+class A { void m() { int x = new 0; } }
+$$$expr9
+class A { void m() { int x = new int; } }
+$$$field1
+class A { int; }
+$$$field3
+class A { int x }
+$$$stmt4
+class A { void m() { int x = 0 } }
+$$$field5
+class A {
+    int i;j;
+}
+$$$field6
+class A {
+    j;
+}
+$$$field7
+class A {
+    int * j;
+}
+$$$for1
+class A { void m() { int i; for( ; ; true; i=i+1) ; } }
+$$$for2
+class A { void m() { int i; for( , i=0; true; i=i+1) ; } }
+$$$for3
+class A { void m() { int i; for( i = 0, ; true; i=i+1) ; } }
+$$$for4
+class A { void m() { for(int i = 0; ; ; i=i+1) ; } }
+$$$for5
+class A { void m() { for(int i = 0; true; i = 0,) ; } }
+$$$for6
+class A { void m() { for(int i = 0; true; i=i+1) } }
+$$$for7
+class A { void m() { int i; for() ; } }
+$$$if1
+class A { void m() { if () ; } }
+$$$if2
+class A { void m() { if (;) ; } }
+$$$if3
+class A { int m() { if (true) } }
+$$$if_else
+class A { void m() { if (true) ; else } }
+$$$instr_decl1
+class A { void m() { int x = 0 } }
+$$$instr_decl2
+class A { void m() { static int x = 0; } }
+$$$instr_expr
+class A { int m() { 0 } }
+$$$int
+class A {
+    int x = 01;
+}
+$$$keyword1
+classa A { }
+$$$keyword2
+class A extendsa B { }
+$$$keyword4
+class A { void m() { fora (int i = 0; true; i=i+1); } }
+$$$keyword5
+class A { void m() { A a = newa A(); A() {}} }
+$$$keyword6
+class A { void m() { int x = 0 instanceo boolean; } }
+$$$lexing1
+class A {
+        int foo(int a, int b) {
+            return a--b;
+        }
+
+$$$lexing2
+class A {
+    void m() { int i = 1/// comment starts at first /, not second
+        1; }
+}
+$$$lexing3
+class A {
+    void m() { int i = 1/**/0; }
+}
+$$$lexing4
+class A {
+        void m() { i/**/nt i = 10; }
+    }
+$$$lexing5
+class A {
+    void m() { int i = 0; i +/**/= 10; }
+}
+$$$lexing6
+class A {
+    void m() { int i = 0; i + = 10; }
+}
+$$$method1
+class A { void int m() {} }
+$$$method2
+class A { void m() { }
+$$$method3
+class A {
+    int i;
+    int meth {return 0;}}
+$$$method4
+class A {
+    int i;
+    int meth (int j)}
+$$$modifier
+class A { stati int x; }
+$$$parameters1
+class A { void m(int) {} }
+$$$parameters2
+class A { void m(int x,) {} }
+$$$parameters3
+class A { void m(x) {} }
+$$$return1
+class A { int m() { return }
+$$$return2
+class A { int x =  }
+

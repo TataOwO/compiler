@@ -1,0 +1,10 @@
+$$$subtype
+class A {}
+class B extends A { B(){} }
+class M { void m() { A a = new B(); } }
+$
+class A {}
+class M { void m() { A a = null; } }
+$
+class A {}
+class B extends A { A m(B b) { return b; } }

@@ -1,0 +1,5 @@
+$$$assign
+class M { void m() { int x; int y = x = 0; } }
+$
+class M { boolean m() { return 1==2 && 3==4 || !(5>=6); } }
+

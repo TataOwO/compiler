@@ -1,0 +1,289 @@
+$$$and1
+class A { void m() { boolean x = 1 && true; } }
+$$$and2
+class A { void m() { boolean x = true || null; } }
+$$$and3
+class A { void m() { int x = true && true; } }
+$$$bad_return
+class A { int m() { return true; } }
+$$$bang1
+class A { void m() { boolean b = ! 1; } }
+$$$bang2
+class A { void m() { boolean b = ! null; } }
+$$$bang3
+class A { void m() { int b = ! true; } }
+$$$cast1
+class A { A() {} }
+
+class B { void m() { A a = (A)"tutu"; } }
+
+$$$cast2
+class A { A() {} }
+
+class B { void main() { String s = (String)new A(); } }
+
+$$$cast5
+class A { void m() { int x = 0; int y = ((Object)new A()).x; } }
+
+$$$clash_class
+class Object {}
+$
+class String {}
+$
+class A {}
+class A {}
+$$$
+class Main {}
+$$$clash_attr
+class A { int x; int x; }
+$
+class A { int x; boolean x; }
+$$$constant1
+class A {
+    void m() { boolean x = 1; }
+}
+$$$constant2
+class A {
+    void m() { int x = true; }
+}
+$$$constr_name
+class A { B() { } }
+
+$$$constructor1
+class A {
+    A(int x) { }
+    void m() { A a = new A(); }
+}
+$$$constructor2
+class A { A() {} A(int x) {} }
+
+class B extends A {
+    void m() { B b = new B(0); }
+}
+$$$constructor3
+class A {
+    A(int x) { }
+
+    void m() { A a = new A(true); }
+}
+$$$constructor4
+class A {
+    A(int x, int y) { }
+
+    void m() { A a = new A(1); }
+}
+$$$constructor5
+class A {
+    A(int x) { }
+
+    void m() { A a = new A(1, 2); }
+}
+$$$context_block
+class A { void m() { { int i = 0; }; i = 1; } }
+$$$context_constructor
+class A { A(int x) { int x; } }
+$$$context_for4
+class A { void m() { for(;; ) int i = 0; i = 1; } }
+$$$context_ifelse
+class A { void m() { if (true) int x = 1; else x = 2; } }
+$$$context_if
+class A { void m() { if (true) int x = 1; x = 2; } }
+$$$context_meth
+class A { void m(int x) { int x; } }
+$$$context_return
+class A { void m() { return x; } }
+$$$context_seq1
+class A { void m() { int x = y; int y = 1; } }
+$$$context_seq2
+class A { void m() { int x; int x; } }
+$$$cyclic1
+class A extends A {}
+$$$cyclic2
+class A extends B {}
+class B extends A {}
+$$$cyclic3
+class A extends B {}
+class B extends C {}
+class C extends D {}
+class D extends A {}
+$$$different_type
+class A {
+    int m(B b) { return 0; }
+}
+
+class B extends A {
+    void m(B b) {}
+}
+$$$equal1
+class A { void m() { int b = true == true; } }
+$$$equal2
+class A {void m() {  boolean b = true == 1; } }
+$$$field1
+class A {
+    void m() { boolean x = true; int y = x; }
+}
+$$$field4
+class A { boolean x; A() {} }
+class B { int x; void m() { int y = new A().x; } }
+$$$heritage_string
+class A extends String { }
+$$$instanceof1
+class A { A() { } }
+class B {
+    void main() { if ((new A()) instanceof String) ; }
+}
+$$$instanceof2
+class A { }
+class B { B() { } }
+
+class M {
+    void main() { boolean b = new B() instanceof A; }
+}
+$$$instanceof3
+class M {
+    void main() { boolean b = 1 instanceof Object; }
+}
+$$$instanceof4
+class M {
+    void main() { boolean b = 1 instanceof int; }
+}
+$$$instanceof5
+class A { void m() { int x = "" instanceof String; } }
+$$$instanceof6
+class A {
+    A a;
+    void m() { boolean x = 1 + a instanceof A;
+               boolean y = ! a instanceof A; }
+}
+$$$lt1
+class A { void m() { int b = 1 < 1; } }
+$$$lt2
+class A { void m() { boolean b = 1 > true; } }
+$$$lt3
+class A { void m() { boolean b = null <= 1; } }
+$$$mod1
+class A { void m() { int x = true % 1; } }
+$$$mod2
+class A { void m() { int x = 1 % true; } }
+$$$mod3
+class A { void m() { boolean x = 1 % 1; } }
+$$$multicast1
+class A { void m() { int x = (int)(A)1; } }
+$$$multicast2
+class A { A() {} }
+
+class B { void m() { A a = (B)(A)new A(); } }
+$$$multicast3
+class A { void m() { int x = (int)(boolean)true; } }
+$$$multicast4
+class A { void m() { A a = (A)(int)0; } }
+$$$multiple_definitions1
+class A { A() { } A() { } }
+$$$multiple_definitions2
+class A { void m() { } void m() { } }
+$$$multiple_definitions3
+class A { void m() { } int m() { } }
+$$$multiple_parameters1
+class A {
+    void m(int x, int y, int z, int y, int t) { }
+}
+$$$multiple_parameters2
+class A {
+    A(int x, int y, boolean x) { }
+}
+$$$nomatch1
+
+class A {
+    void f() { int x = m(1); }
+    void m() {}
+}
+$$$nomatch2
+
+class A { }
+
+class B extends A {
+    void g() { g((A)this, (A)this); }
+    void g(A a, B b) { }
+}
+$$$nomatch3
+
+class A { }
+
+class B extends A {
+    void g() { g((A)this); }
+    void g(B b) { }
+}
+$$$no_return1
+class A { int m() { } }
+$$$no_return2
+class A {
+    int f() {
+	if (false)
+	    return 0;
+    }
+}
+$$$no_return3
+class A {
+    int f() {
+	if (true) ; else return 0;
+    }
+}
+$$$no_return4
+class A {
+    int f() {
+	for(; false;)
+	    return 0;
+    }
+}
+$$$plus1
+class A { void m() { int x = 1 + true; } }
+$$$plus2
+class A { void m() { int x = 1 - null; } }
+$$$plus3
+class A { void m() { int x = - true; } }
+$$$plus_string2
+class M { void m() { String s = true + ""; } }
+$$$plus_string3
+class M { void m() { int s = 1 + ""; } }
+$$$println1
+class M { void m() { System.out.println(1); } }
+$$$println2
+class M { void m() { System.out.println(null); } }
+$$$println3
+class M { int m() { return System.out.println(""); } }
+
+$$$this1
+class A { }
+
+class B {
+    void m() { A x = this; }
+}
+$$$this2
+class A { void m() { B b = this; } }
+
+class B extends A { }
+
+$$$unbound_class1
+class A extends B {}
+$$$unbound_class2
+class A { B b; }
+$$$unbound_constructor
+class A { void m() { A a = new A(); } A(int x) { } }
+$$$unbound_field
+class A { A a; void m() { int x = A.f; } }
+$$$unbound_method
+class A { A a; void m() { int x = A.m(); } }
+$$$unbound_var
+class A { void m() { int x = y; } }
+$$$var1
+class A { boolean m(int x) { return x; } }
+
+$$$var2
+class A { boolean m() { int x; return x; } }
+
+$$$var3
+class A {
+    boolean b;
+    A(int x) { b = x; }
+}
+
