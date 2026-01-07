@@ -1,0 +1,16 @@
+# OCaml build artifacts
+_build/
+*.exe
+*.native
+*.byte
+*.cmo
+*.cmi
+*.cmx
+*.o
+*.a
+
+# Generated assembly
+*.s
+
+# Compiled binaries
+a.out
