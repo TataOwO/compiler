@@ -235,7 +235,6 @@ let collect_members (pfile: pfile) : unit =
   (* Process each class *)
   List.iter (fun (class_id, _, decls) ->
     let c = Hashtbl.find class_table class_id.id in
-    let loc = class_id.loc in
 
     (* Inherit attributes from parent *)
     if c != class_Object && c != class_String then begin
@@ -325,24 +324,25 @@ let collect_members (pfile: pfile) : unit =
           in
 
           (match this_method, parent_method with
-           | Some m, Some pm when m == pm ->
-             (* We have inherited method, ok to override *)
-             (* Check override has same signature *)
-             let param_types = List.map (fun v -> v.var_type) vars in
-             let parent_param_types = List.map (fun v -> v.var_type) pm.meth_params in
-             if not (typ_equal ret_type pm.meth_type) then
-               error ~loc:meth_loc "method %s: return type differs from parent" meth_name;
-             if List.length param_types <> List.length parent_param_types then
-               error ~loc:meth_loc "method %s: parameter count differs from parent" meth_name;
-             List.iter2 (fun t1 t2 ->
-               if not (typ_equal t1 t2) then
-                 error ~loc:meth_loc "method %s: parameter type differs from parent" meth_name
-             ) param_types parent_param_types
+           | Some m, Some pm ->
+             if m == pm then begin
+               (* We have inherited method, ok to override *)
+               (* Check override has same signature *)
+               let param_types = List.map (fun v -> v.var_type) vars in
+               let parent_param_types = List.map (fun v -> v.var_type) pm.meth_params in
+               if not (typ_equal ret_type pm.meth_type) then
+                 error ~loc:meth_loc "method %s: return type differs from parent" meth_name;
+               if List.length param_types <> List.length parent_param_types then
+                 error ~loc:meth_loc "method %s: parameter count differs from parent" meth_name;
+               List.iter2 (fun t1 t2 ->
+                 if not (typ_equal t1 t2) then
+                   error ~loc:meth_loc "method %s: parameter type differs from parent" meth_name
+               ) param_types parent_param_types
+             end else
+               (* Method declared in this class shadows inherited one - error *)
+               error ~loc:meth_loc "duplicate method %s" meth_name
            | Some _, None ->
              (* Method already declared in this class *)
-             error ~loc:meth_loc "duplicate method %s" meth_name
-           | Some m, Some pm when m != pm ->
-             (* Method declared in this class shadows inherited one - error *)
              error ~loc:meth_loc "duplicate method %s" meth_name
            | None, Some pm ->
              (* Overriding parent method - check signature *)
