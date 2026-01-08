@@ -770,34 +770,20 @@ let file ?debug:(b=false) (p: Ast.pfile) : Ast.tfile =
     let typed_decls = List.filter_map (fun decl ->
       match decl with
       | PDattribute _ -> None  (* Attributes don't produce typed decls *)
-      | PDconstructor (_, params, body) ->
+      | PDconstructor (_, _params, body) ->
         let env = create_env c Tvoid in
-        (* Add params to environment *)
-        List.iter (fun (pty, id) ->
-          let typ = typ_of_pexpr_typ ~loc:id.loc pty in
-          let v = { var_name = id.id; var_type = typ; var_ofs = 0 } in
-          Hashtbl.add env.vars id.id v
-        ) params;
+        (* Get the vars that were stored in pass 1 - use the SAME objects *)
+        let vars = Hashtbl.find class_constructors c.class_name in
+        (* Add them to environment *)
+        List.iter (fun v -> Hashtbl.add env.vars v.var_name v) vars;
         let typed_body = typecheck_stmt env body in
-        let vars = params_to_vars ~loc:class_id.loc params in
         Some (Dconstructor (vars, typed_body))
-      | PDmethod (ret_opt, meth_id, params, body) ->
+      | PDmethod (ret_opt, meth_id, _params, body) ->
         let ret_type = match ret_opt with
           | None -> Tvoid
           | Some pty -> typ_of_pexpr_typ ~loc:meth_id.loc pty
         in
-        let env = create_env c ret_type in
-        (* Add params to environment *)
-        List.iter (fun (pty, id) ->
-          let typ = typ_of_pexpr_typ ~loc:id.loc pty in
-          let v = { var_name = id.id; var_type = typ; var_ofs = 0 } in
-          Hashtbl.add env.vars id.id v
-        ) params;
-        let typed_body = typecheck_stmt env body in
-        (* Check return paths for non-void methods *)
-        if ret_type <> Tvoid && not (always_returns typed_body) then
-          error ~loc:meth_id.loc "method %s may not return a value" meth_id.id;
-        (* Get or create method record *)
+        (* Get method record from pass 1 (or create for Main.main) *)
         let meth =
           if c.class_name = "Main" && meth_id.id = "main" then
             { meth_name = "main"; meth_type = Tvoid; meth_params = []; meth_ofs = 0 }
@@ -806,6 +792,13 @@ let file ?debug:(b=false) (p: Ast.pfile) : Ast.tfile =
             with Not_found ->
               error ~loc:meth_id.loc "internal error: method %s not found" meth_id.id
         in
+        let env = create_env c ret_type in
+        (* Add params from method record to environment - use the SAME objects *)
+        List.iter (fun v -> Hashtbl.add env.vars v.var_name v) meth.meth_params;
+        let typed_body = typecheck_stmt env body in
+        (* Check return paths for non-void methods *)
+        if ret_type <> Tvoid && not (always_returns typed_body) then
+          error ~loc:meth_id.loc "method %s may not return a value" meth_id.id;
         Some (Dmethod (meth, typed_body))
     ) decls in
 

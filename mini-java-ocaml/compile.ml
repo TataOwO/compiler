@@ -51,6 +51,15 @@ let get_object_size c =
   try Hashtbl.find object_sizes c.class_name
   with Not_found -> 8  (* just descriptor pointer *)
 
+(* Get inheritance depth of a class *)
+let rec get_depth c =
+  if c == class_Object then 0
+  else 1 + get_depth c.class_extends
+
+(* Sort classes by inheritance depth (parents before children) *)
+let sort_by_depth tfile =
+  List.sort (fun (c1, _) (c2, _) -> compare (get_depth c1) (get_depth c2)) tfile
+
 (* Compute attribute offsets for all classes *)
 let compute_attr_offsets (tfile : tfile) =
   (* Object has no attributes, size = 8 (just descriptor) *)
@@ -59,7 +68,7 @@ let compute_attr_offsets (tfile : tfile) =
   Hashtbl.add object_sizes "String" 8;
 
   (* Process user classes in topological order (parents before children) *)
-  (* tfile is already in order from type checking *)
+  let sorted = sort_by_depth tfile in
   List.iter (fun (c, _decls) ->
     if c != class_Object && c != class_String then begin
       (* Start with parent's size *)
@@ -82,7 +91,7 @@ let compute_attr_offsets (tfile : tfile) =
 
       Hashtbl.add object_sizes c.class_name !next_ofs
     end
-  ) tfile
+  ) sorted
 
 (* Compute method offsets for all classes *)
 let compute_method_offsets (tfile : tfile) =
@@ -91,7 +100,8 @@ let compute_method_offsets (tfile : tfile) =
   let equals_meth = Hashtbl.find class_String.class_methods "equals" in
   equals_meth.meth_ofs <- 8;
 
-  (* Process user classes *)
+  (* Process user classes in topological order (parents before children) *)
+  let sorted = sort_by_depth tfile in
   List.iter (fun (c, _decls) ->
     if c != class_Object && c != class_String then begin
       (* Find max offset from parent *)
@@ -125,7 +135,7 @@ let compute_method_offsets (tfile : tfile) =
           next_ofs := !next_ofs + 8
       ) c.class_methods
     end
-  ) tfile
+  ) sorted
 
 (* ========================================================================= *)
 (* Runtime Support                                                           *)
@@ -598,12 +608,12 @@ let rec compile_expr (e : expr) : text =
        init_code := !init_code ++ movq (imm 0) (ind ~ofs:(i*8) rax)
      done;
      !init_code) ++
-    (* Push arguments in reverse order *)
-    (let push_args = List.fold_right (fun arg code ->
+    (* Push arguments in reverse order (last arg first, so first arg ends up closest to 'this') *)
+    (let push_args = List.fold_left (fun code arg ->
+      code ++
       compile_expr arg ++
-      pushq !%rax ++
-      code
-    ) args nop in
+      pushq !%rax
+    ) nop (List.rev args) in
     push_args) ++
     (* Push 'this' *)
     pushq (ind rsp ~ofs:(8 * List.length args)) ++
@@ -615,12 +625,12 @@ let rec compile_expr (e : expr) : text =
     popq rax
 
   | Ecall (e_receiver, meth, args) ->
-    (* Push arguments in reverse order *)
-    let push_args = List.fold_right (fun arg code ->
+    (* Push arguments in reverse order (last arg first, so first arg ends up closest to 'this') *)
+    let push_args = List.fold_left (fun code arg ->
+      code ++
       compile_expr arg ++
-      pushq !%rax ++
-      code
-    ) args nop in
+      pushq !%rax
+    ) nop (List.rev args) in
     push_args ++
     (* Compile receiver and push as 'this' *)
     compile_expr e_receiver ++
@@ -628,6 +638,8 @@ let rec compile_expr (e : expr) : text =
     (* Null check *)
     movq !%rax !%rdi ++
     call "_check_null" ++
+    (* Get 'this' from stack (call might have clobbered %rax) *)
+    movq (ind rsp) !%rax ++
     (* Get descriptor and method pointer *)
     movq (ind rax) !%rcx ++  (* descriptor *)
     movq (ind ~ofs:meth.meth_ofs rcx) !%rcx ++  (* method pointer *)
@@ -683,6 +695,7 @@ let rec compile_stmt (s : stmt) : text =
     label lbl_end
 
   | Sreturn None ->
+    xorq !%rax !%rax ++  (* return 0 for void returns (needed for main exit code) *)
     leave ++
     ret
 
