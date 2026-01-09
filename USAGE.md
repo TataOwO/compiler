@@ -98,6 +98,24 @@ Code Behavior : 72/72 : 100%
 **Cause:** Windows line endings (CRLF) in shell scripts
 **Fix:** Run `dos2unix tests/test` or `sed -i 's/\r$//' tests/test`
 
+### Error: Tests fail with "bad output" (WSL/Windows)
+**Cause:** The `.out` expected output files have Windows line endings (CRLF), but our compiler produces Unix line endings (LF). The `cmp` comparison fails due to this mismatch.
+**Fix:** Convert all test files to Unix line endings:
+```bash
+# Install dos2unix if needed
+sudo apt install dos2unix
+
+# Convert all test-related files
+dos2unix tests/test
+find tests -name "*.out" -exec dos2unix {} \;
+```
+
+Or using sed:
+```bash
+sed -i 's/\r$//' tests/test
+find tests -name "*.out" -exec sed -i 's/\r$//' {} \;
+```
+
 ### Error: `/usr/bin/ld: warning: missing .note.GNU-stack section`
 **Cause:** Normal warning from linker, can be safely ignored
 **Fix:** Not required, program runs correctly
